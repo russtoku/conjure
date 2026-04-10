@@ -74,6 +74,7 @@
 (fn M.eval-str [opts]
   (with-repl-or-warn
     (fn [repl]
+      (log.dbg (.. "scheme.stdio.M.eval-str[callback]; opts: '" (core.str opts) "'"))
       (if (M.valid-str? opts.code)
         (repl.send
           (.. opts.code "\n")
