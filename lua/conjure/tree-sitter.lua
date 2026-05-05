@@ -18,8 +18,8 @@ local function enabled_3f()
   end
 end
 local function parse_21()
-  local _, parser = pcall(vim.treesitter.get_parser)
-  if (nil ~= parser) then
+  local ok_3f, parser = pcall(vim.treesitter.get_parser)
+  if (ok_3f and (nil ~= parser)) then
     return parser:parse()
   else
     return nil

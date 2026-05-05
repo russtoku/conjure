@@ -21,8 +21,8 @@
     false))
 
 (fn parse! []
-  (let [(_ parser) (pcall vim.treesitter.get_parser)]
-    (if (not= nil parser)
+  (let [(ok? parser) (pcall vim.treesitter.get_parser)]
+    (if (and ok? (not= nil parser))
       (parser:parse))))
 
 (fn node->str [node]
