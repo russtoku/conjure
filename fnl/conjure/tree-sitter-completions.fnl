@@ -12,8 +12,9 @@
 
 (fn build-completion-query [ts-lang cmpl-resource]
   (let [query-path (string.format symbol-query-path-template cmpl-resource)
-        query-text (res.get-resource-contents query-path) ]
-    (if query-text
+        query-text (res.get-resource-contents query-path) 
+        lang-avail (pcall vim.treesitter.language.inspect ts-lang)]
+    (if (and query-text lang-avail)
       (vim.treesitter.query.parse ts-lang query-text)
       nil)))
 

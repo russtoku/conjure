@@ -12,7 +12,8 @@ local query_cache = {}
 local function build_completion_query(ts_lang, cmpl_resource)
   local query_path = string.format(symbol_query_path_template, cmpl_resource)
   local query_text = res["get-resource-contents"](query_path)
-  if query_text then
+  local lang_avail = pcall(vim.treesitter.language.inspect, ts_lang)
+  if (query_text and lang_avail) then
     return vim.treesitter.query.parse(ts_lang, query_text)
   else
     return nil
