@@ -601,8 +601,7 @@ configure the ones you care about one at a time you can set:
 
                                                  *g:conjure#highlight#enabled*
 `g:conjure#highlight#enabled`
-            Enable highlighting of evaluated forms. Requires support for the
-            highlight API, so you'll need Neovim 0.5+.
+            Enable highlighting of evaluated forms.
             Default: `false`
 
                                                    *g:conjure#highlight#group*
@@ -847,7 +846,6 @@ configure the ones you care about one at a time you can set:
 
             This is experimental and requires the following:
 
-             * Neovim 0.5+ with tree-sitter support
              * https://github.com/nvim-treesitter/nvim-treesitter
              * The appropriate `:TSInstall [filetype]` to have already been run.
              * This flag to be `true`.
