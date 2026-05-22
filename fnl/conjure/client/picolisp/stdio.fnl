@@ -1,6 +1,5 @@
 (local {: autoload : define} (require :conjure.nfnl.module))
 (local core (autoload :conjure.nfnl.core))
-(local nfs (autoload :conjure.nfnl.fs))
 (local str (autoload :conjure.nfnl.string))
 (local stdio (autoload :conjure.remote.stdio))
 (local config (autoload :conjure.config))
@@ -33,14 +32,14 @@
                   :stop "cS"}}}}}))
 
 (local cfg (config.get-in-fn [:client :picolisp :stdio]))
-(set M.state (client.new-state #(do {:repl nil})))
+(set M.state (or M.state (client.new-state #(do {:repl nil}))))
 
 (set M.buf-suffix ".l")
 (set M.comment-prefix "# ")
 (set M.form-node? ts.node-surrounded-by-form-pair-chars?)
 
 (fn M.comment-node? [node]
-  (node-prefixed-by-chars? node "#"))
+  (ts.node-prefixed-by-chars? node ["#"]))
 
 (fn with-repl-or-warn [f _opts]
   (let [repl (M.state :repl)]
@@ -66,10 +65,9 @@
                      (= "" (core.get-in msgs [1 :out])))
             (core.assoc-in msgs [1 :out] (.. M.comment-prefix "Empty result.")))
 
-          (let [msgs (core.filter #(not= ".." (. $1 :out)) msgs)]
-            (when opts.on-result
-              (opts.on-result (str.join "\n" (format-message (core.last msgs)))))
-            (core.run! display-result msgs)))
+          (when opts.on-result
+            (opts.on-result (str.join "\n" (format-message (core.last msgs)))))
+          (core.run! display-result msgs))
         {:batch? true}))))
 
 (fn M.eval-file [opts]

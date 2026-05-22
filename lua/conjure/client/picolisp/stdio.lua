@@ -3,7 +3,6 @@ local _local_1_ = require("conjure.nfnl.module")
 local autoload = _local_1_.autoload
 local define = _local_1_.define
 local core = autoload("conjure.nfnl.core")
-local nfs = autoload("conjure.nfnl.fs")
 local str = autoload("conjure.nfnl.string")
 local stdio = autoload("conjure.remote.stdio")
 local config = autoload("conjure.config")
@@ -18,15 +17,19 @@ if config["get-in"]({"mapping", "enable_defaults"}) then
 else
 end
 local cfg = config["get-in-fn"]({"client", "picolisp", "stdio"})
-local function _3_()
-  return {repl = nil}
+local or_3_ = M.state
+if not or_3_ then
+  local function _4_()
+    return {repl = nil}
+  end
+  or_3_ = client["new-state"](_4_)
 end
-M.state = client["new-state"](_3_)
+M.state = or_3_
 M["buf-suffix"] = ".l"
 M["comment-prefix"] = "# "
 M["form-node?"] = ts["node-surrounded-by-form-pair-chars?"]
 M["comment-node?"] = function(node)
-  return __fnl_global__node_2dprefixed_2dby_2dchars_3f(node, "#")
+  return ts["node-prefixed-by-chars?"](node, {"#"})
 end
 local function with_repl_or_warn(f, _opts)
   local repl = M.state("repl")
@@ -40,32 +43,27 @@ local function format_message(msg)
   return str.split((msg.out or msg.err), "\n")
 end
 local function display_result(msg)
-  local function _5_(_241)
+  local function _6_(_241)
     return not ("" == _241)
   end
-  return log.append(core.filter(_5_, format_message(msg)))
+  return log.append(core.filter(_6_, format_message(msg)))
 end
 M["eval-str"] = function(opts)
-  local function _6_(repl)
-    local function _7_(msgs)
+  local function _7_(repl)
+    local function _8_(msgs)
       if ((1 == core.count(msgs)) and ("" == core["get-in"](msgs, {1, "out"}))) then
         core["assoc-in"](msgs, {1, "out"}, (M["comment-prefix"] .. "Empty result."))
       else
       end
-      local msgs0
-      local function _9_(_241)
-        return (".." ~= _241.out)
-      end
-      msgs0 = core.filter(_9_, msgs)
       if opts["on-result"] then
-        opts["on-result"](str.join("\n", format_message(core.last(msgs0))))
+        opts["on-result"](str.join("\n", format_message(core.last(msgs))))
       else
       end
-      return core["run!"](display_result, msgs0)
+      return core["run!"](display_result, msgs)
     end
-    return repl.send((opts.code .. "\n"), _7_, {["batch?"] = true})
+    return repl.send((opts.code .. "\n"), _8_, {["batch?"] = true})
   end
-  return with_repl_or_warn(_6_)
+  return with_repl_or_warn(_7_)
 end
 M["eval-file"] = function(opts)
   return M["eval-str"](core.assoc(opts, "code", core.slurp(opts["file-path"])))
