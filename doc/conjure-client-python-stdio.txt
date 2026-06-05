@@ -21,6 +21,10 @@ as well as the command line.
 >python
  if __name__ in ("__main__", "__repl__"):
 
+Conjure also sets `__file__` to the path of the buffer being evaluated before
+each evaluation. Multi-line evaluations use that path as the filename passed to
+Python's `compile`, so tracebacks should point back at the evaluated buffer.
+
 Once you have tree sitter installed and configured (remember to run
 `:TSInstall python`!) you should be able to evaluate forms just like you would
 in any other Conjure supported language.
